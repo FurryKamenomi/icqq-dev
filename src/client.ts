@@ -223,6 +223,9 @@ export class Client extends BaseClient {
             fs.writeFileSync(file, JSON.stringify(device, null, 2))
         }
         super(config.platform, device,config as Required<Config>);
+        if (config.log_config) {
+            log4js.configure(config.log_config as string)
+        }
         this.logger = log4js.getLogger('[icqq]');
         if (!config.sign_api_addr) {
             this.logger.warn(`未配置签名API地址，登录/消息发送可能失败`)
@@ -900,8 +903,8 @@ export interface Config {
      * 打印日志会降低性能，若消息量巨大建议修改此参数
      */
     log_level?: LogLevel
-    /** 登录设备，默认为安卓手机 */
-    platform?: Platform
+    /** 登录设备，默认为安卓手机 (可支持自定义，请确保设备信息准确性)*/
+    platform?: Platform | Required<import('./core/device').Apk>
     /** 使用版本，仅在对应platform中有多个版本是有效，不填则使用最新版本 */
     ver?: string
     /** log4js配置 */

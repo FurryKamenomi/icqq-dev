@@ -170,10 +170,9 @@ export class BaseClient extends Trapper {
   ];
   private ssoPacketList: any = [];
 
-  constructor(p: Platform = Platform.Android, d: ShortDevice, public config: Required<Config>) {
+  constructor(p: Platform | Apk = Platform.Android, d: ShortDevice, public config: Required<Config>) {
     super()
-    if (config.log_config) log4js.configure(config.log_config as string)
-    this.apk = getApkInfo(p,config.ver)
+    this.apk = typeof p === 'number' ? getApkInfo(p, config.ver) : p;
     this.device = new Device(this.apk, d)
     this[NET].on("error", err => this.emit("internal.verbose", err.message, VerboseLevel.Error))
     this[NET].on("close", () => {
